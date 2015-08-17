@@ -1,6 +1,7 @@
 var express    = require('express');
 var app        = express();
-var Twitter = require('node-twitter');
+var Twitter    = require('node-twitter');
+var https      = require('https');
 
 var port = process.env.PORT || 8080;
 
@@ -54,7 +55,19 @@ router.get('/search/twitter', function(req, res) {
     });
 });
 router.get('/search/wikipedia', function(req, res) {
-    res.json({ message: 'APISH API, version 0.0.1' });
+    var query = '/w/api.php?action=query&continue&list=search&srsearch='.concat(req.query.q, '&srlimit=15&format=json');
+    var wikis = [];
+    var wikiget = https.request({'host': 'en.wikipedia.org', 'port': 443, 'path': query, 'method': 'GET'}, function (result) {
+      result.on('data', function (d) {
+        console.log(d);
+        wikis = d;
+        res.json(wikis);
+      })
+    });
+    wikiget.end();
+    wikiget.on('error', function (e) {
+      console.log(e);
+    })
 });
 
 // ROUTE REGISTRY
