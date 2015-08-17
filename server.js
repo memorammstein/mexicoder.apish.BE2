@@ -1,7 +1,7 @@
 var express    = require('express');
 var app        = express();
 var Twitter    = require('node-twitter');
-var https      = require('https');
+var request      = require('request');
 
 var port = process.env.PORT || 8080;
 
@@ -19,22 +19,7 @@ var router = express.Router();
 router.get('/', function(req, res) {
     res.json({ message: 'APISH API, version 0.0.1' });
 });
-router.get('/search/sources', function(req, res) {
-    res.json(
-      [
-        {
-          name: 'Twitter',
-          url: '/search/twitter',
-          logo: 'https://g.twimg.com/about/feature-corporate/image/twitterbird_RGB.png'
-        },
-        {
-          name: 'Wikipedia',
-          url: '/search/wikipedia',
-          logo: 'https://upload.wikimedia.org/wikipedia/meta/b/be/Wikipedia-logo-v2_2x.png'
-        }
-      ]
-    );
-});
+
 router.get('/search/twitter', function(req, res) {
     var tweets = [];
     twitterRestClient.search({q: req.query.q}, function (error, result) {
@@ -54,20 +39,25 @@ router.get('/search/twitter', function(req, res) {
       res.json(tweets);
     });
 });
+
 router.get('/search/wikipedia', function(req, res) {
     var query = '/w/api.php?action=query&continue&list=search&srsearch='.concat(req.query.q, '&srlimit=15&format=json');
+    var wikilink = 'https://en.wikipedia.org'.concat(query);
     var wikis = [];
-    var wikiget = https.request({'host': 'en.wikipedia.org', 'port': 443, 'path': query, 'method': 'GET'}, function (result) {
-      result.on('data', function (d) {
-        console.log(d);
-        wikis = d;
+    request(wikilink, function (error, response, body) {
+      if (response.statusCode == 200) {
+        wikis = JSON.parse(body).query.search.map(function (wiki) {
+          return {
+            'title': wiki.title,
+            'snippet': wiki.snippet,
+            'timestamp': wiki.timestamp
+          };
+        });
         res.json(wikis);
-      })
+      } else {
+        res.status(400).send('wikipedia seems to be down');
+      }
     });
-    wikiget.end();
-    wikiget.on('error', function (e) {
-      console.log(e);
-    })
 });
 
 // ROUTE REGISTRY

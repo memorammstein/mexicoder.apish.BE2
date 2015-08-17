@@ -22,7 +22,8 @@
   ],
   "dependencies": {
     "express": "~4.0.0",
-    "node-twitter": "^0.5.3"
+    "node-twitter": "^0.5.3",
+    "request": "^2.60.0"
   },
   "devDependencies": {
     "grunt-cli": "^0.1.13",
