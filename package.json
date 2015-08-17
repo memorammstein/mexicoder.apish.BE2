@@ -10,7 +10,7 @@
   "repository": "memorammstein/mexicoderapishbe2",
   "license": "MIT",
   "files": [
-    "index.js"
+    "server.js"
   ],
   "keywords": [
     "mexicoderapishbe2",
@@ -20,7 +20,10 @@
     "twitter",
     "wikipedia"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "express": "~4.0.0",
+    "mongoose": "~3.6.13"
+  },
   "devDependencies": {
     "grunt-cli": "^0.1.13",
     "grunt-contrib-jshint": "^0.11.0",
