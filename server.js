@@ -36,7 +36,7 @@ router.get('/search/twitter', function(req, res) {
           'created_at': tweet.created_at
         };
       });
-      res.json(tweets);
+      res.status(200).json(tweets);
     });
 });
 
@@ -53,7 +53,7 @@ router.get('/search/wikipedia', function(req, res) {
             'timestamp': wiki.timestamp
           };
         });
-        res.json(wikis);
+        res.status(200).json(wikis);
       } else {
         res.status(400).send('wikipedia seems to be down');
       }
